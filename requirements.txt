@@ -1,0 +1,4 @@
+alembic
+fastapi[all]
+sqlalchemy
+uvicorn[standard]
