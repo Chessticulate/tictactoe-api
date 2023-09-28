@@ -42,14 +42,14 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.post("/users/{user_id}/games/", response_model=schemas.Game)
+@app.post("/games/new/", response_model=schemas.Game)
 def create_game_for_user(
     user_id: int, game: schemas.Game, db: Session = Depends(get_db)
 ):
     return crud.create_user_game(db=db, game=game, user_id=user_id)
     
 
-@app.put("/users/{user_id}/games/{invitee_id}/games/", response_model=schemas.Game)
+@app.put("/games/invite/{invitee_id}/", response_model=schemas.Game)
 def send_game_invite(
     user_id: int, game: schemas.Game, db: Session = Depends(get_db), invitee_id: int = None
 ):
@@ -57,7 +57,7 @@ def send_game_invite(
     return crud.invite_to_game(db=db, game=game, invitee_id=invitee_id)
 
 
-@app.put("/users/{user_id}/games/", response_model=schemas.Game)
+@app.put("/games/accept/{game_id}/", response_model=schemas.Game)
 def accept_invite(
     user_id: int, game: schemas.Game, db: Session = Depends(get_db)
 ):
