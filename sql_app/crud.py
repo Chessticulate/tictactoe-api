@@ -4,7 +4,6 @@ from . import models, schemas
 
 
 def create_game(db: Session, user_id: int):
-    ipdb.set_trace(context=20) 
     db_game = models.Game(owner_id=user_id, state="---------")
     db.add(db_game)
     db.commit()

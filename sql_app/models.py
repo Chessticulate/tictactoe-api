@@ -17,7 +17,7 @@ class Game(Base):
     invitee = relationship("User", back_populates="invited_games", foreign_keys=[invitee_id])
 
     def __repr__(self) -> str:
-        return f"Game(id={self.id!r}, owner={self.owner.username!r}, state={self.username!r}"
+        return f"Game(id={self.id!r}, owner={self.owner.username!r}, state={self.state!r}"
 
 
 class User(Base):

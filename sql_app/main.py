@@ -9,8 +9,6 @@ from sqlalchemy.orm import Session
 from . import crud, models, schemas
 from .database import SessionLocal, engine
 
-import ipdb
-
 
 app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -40,8 +38,7 @@ def get_db():
 
 
 def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
-    db.query(models.User).filter_by(username=token).first()
-    return user
+    return db.query(models.User).filter_by(username=token).first()
 
 
 @app.post("/token")
@@ -51,7 +48,6 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 
 @app.get("/user/")
 def get_user_id(user: Annotated[str, Depends(get_current_user)]):
-    ipdb.set_trace(context=20) 
     return user.id
 
 
