@@ -7,7 +7,7 @@ class Game(BaseModel):
     id: int
     owner_id: Union[int, None]
     invitee_id: Union[int, None]
-    state: str = "---------"
+    state: str
 
     class Config:
         orm_mode = True
@@ -15,7 +15,8 @@ class Game(BaseModel):
 
 class User(BaseModel):
     id: int
-    email: str
+    username: str
+    password: str
     owned_games: List[Game] = []
     invited_games: List[Game] = []
 

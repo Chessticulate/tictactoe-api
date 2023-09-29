@@ -3,32 +3,9 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
-def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
-
-
-def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
-
-
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
-
-
-def create_user(db: Session, user: schemas.User):
-    db_user = models.User(email=user.email)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
-
-
-def get_games(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Game).offset(skip).limit(limit).all()
-
-
-def create_game(db: Session, game: schemas.Game, user_id: int):
-    db_game = models.Game(**game.dict(), owner_id=user_id)
+def create_game(db: Session, user_id: int):
+    ipdb.set_trace(context=20) 
+    db_game = models.Game(owner_id=user_id, state="---------")
     db.add(db_game)
     db.commit()
     db.refresh(db_game)
@@ -40,4 +17,8 @@ def invite_to_game(db: Session, game: schemas.Game, invite_id: int):
 
 
 def accept_invite(db: Session, game: schemas.Game, invitee_id: int):
+    pass
+
+
+def move(db: Session, game_id: int, move: str):
     pass
