@@ -37,41 +37,40 @@ def get_db():
         db.close()
 
 
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
-    return db.query(models.User).filter_by(username=token).first()
-
-
 @app.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     return {"access_token": form_data.username, "token_type": "bearer"}
 
 
 @app.get("/user/")
-def get_user_id(user: Annotated[str, Depends(get_current_user)]):
-    return user.id
+def get_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
+    return db.query(models.User).filter_by(username=token).first()
 
 
 @app.post("/games/new/", response_model=schemas.Game)
-def create_game(db: Session = Depends(get_db), user_id: int = Depends(get_user_id)):
-    return crud.create_game(db=db, user_id=user_id)
-    
+def create_game(db: Session = Depends(get_db), owner: models.User = Depends(get_user)):
+    return crud.create_game(db=db, owner_id=owner.id)
 
-#@app.put("/games/invite/{invitee_id}/", response_model=schemas.Game)
-#def send_game_invite(
-#    user_id: int, game: schemas.Game, db: Session = Depends(get_db), invitee_id: int = None
-#):
-#    #TODO: pull the game from the db, then assert that it is not active, and update its status
-#    return crud.invite_to_game(db=db, game=game, invitee_id=invitee_id)
-#
-#
-#@app.put("/games/accept/{game_id}/", response_model=schemas.Game)
-#def accept_invite(
-#    user_id: int, game: schemas.Game, db: Session = Depends(get_db)
-#):
-#    return crud.accept_invite(db=db, game=game, user_id=user_id)
-#
-#
-#@app.get("/games/", response_model=List[schemas.Game])
-#def read_games(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#    games = crud.get_games(db, skip=skip, limit=limit)
-#    return games
+
+@app.get("/games/", response_model=List[schemas.Game])
+def read_games(db: Session = Depends(get_db)):
+    return crud.get_games(db)
+
+
+@app.put("/invite/{invitee_id}/", response_model=schemas.Game)
+def invite(invitee_id: int, db: Session = Depends(get_db), owner: models.User = Depends(get_user)):
+    game = owner.owned_games[0]
+    return crud.invite(invitee_id=invitee_id, db=db, game=game)
+
+
+@app.put("/accept/{game_id}", response_model=schemas.Game)
+def accept(game_id: int, db: Session = Depends(get_db), user: models.User = Depends(get_user)):
+    game = crud.get_game(db=db, game_id=game_id)
+    return crud.accept(invitee_id=user.id, db=db, game=game)
+
+
+@app.put("/move/{game_id}/{move}", response_model=schemas.Game)
+def move(game_id: int, move: int, db: Session = Depends(get_db), user: models.User = Depends(get_user)):
+    game = crud.get_game(db=db, game_id=game_id)
+    crud.move(db=db, game=game, user=user, move=move)
+    return crud.step_player(db=db, game=game, user=user)

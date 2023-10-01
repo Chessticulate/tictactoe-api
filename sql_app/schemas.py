@@ -7,6 +7,7 @@ class Game(BaseModel):
     id: int
     owner_id: Union[int, None]
     invitee_id: Union[int, None]
+    next_player_id: Union[int, None]
     state: str
 
     class Config:

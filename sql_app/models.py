@@ -12,6 +12,7 @@ class Game(Base):
 
     owner_id = Column(Integer, ForeignKey("users.id"))
     invitee_id = mapped_column(ForeignKey("users.id"))
+    next_player_id = Column(Integer)
 
     owner = relationship("User", back_populates="owned_games", foreign_keys=[owner_id])
     invitee = relationship("User", back_populates="invited_games", foreign_keys=[invitee_id])
