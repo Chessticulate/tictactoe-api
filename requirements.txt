@@ -1,4 +1,7 @@
 alembic
 fastapi[all]
+passlib[bcrypt]
+psycopg2-binary==2.9.7
+python-jose[cryptography]
 sqlalchemy
 uvicorn[standard]
